@@ -1,0 +1,16 @@
+---
+title: "Data"
+author: "Daniel"
+date: "2025-03-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Import Data and Packages
+```{r Data and Packages}
+
+```
+
