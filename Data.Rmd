@@ -1,6 +1,6 @@
 ---
 title: "Data"
-author: "Daniel"
+author: "Daniel & Ellie"
 date: "2025-03-23"
 output: html_document
 ---
@@ -11,6 +11,20 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Import Data and Packages
 ```{r Data and Packages}
+library(lubridate)
+library(ggplot2)
+library(forecast)
+library(Kendall)
+library(tseries)
+library(outliers)
+library(tidyverse)
+library(smooth)
+library(zoo)
+library(kableExtra)
+library(readxl)
 
+load_data <- read_excel(path="../tsa-spring-2025/load.xlsx", col_names=TRUE)
+relative_humidity_data <- read_excel(path="../tsa-spring-2025/relative_humidity.xlsx", col_names=TRUE)
+sub_template <- read_excel(path="../tsa-spring-2025/submission_template.xlsx", col_names=TRUE)
+temperature_data <- read_excel(path="../tsa-spring-2025/temperature.xlsx", col_names=TRUE)
 ```
-
