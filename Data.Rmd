@@ -22,9 +22,26 @@ library(smooth)
 library(zoo)
 library(kableExtra)
 library(readxl)
+library(dplyr)
 
+# Assuming data folder in same location as the active folder
 load_data <- read_excel(path="../tsa-spring-2025/load.xlsx", col_names=TRUE)
+load_data <- mutate(load_data, date = ymd(date))
 relative_humidity_data <- read_excel(path="../tsa-spring-2025/relative_humidity.xlsx", col_names=TRUE)
-sub_template <- read_excel(path="../tsa-spring-2025/submission_template.xlsx", col_names=TRUE)
 temperature_data <- read_excel(path="../tsa-spring-2025/temperature.xlsx", col_names=TRUE)
+# do we need this read in?
+sub_template <- read_excel(path="../tsa-spring-2025/submission_template.xlsx", col_names=TRUE)
+
+# Convert hourly data into daily training data (2005-2009)
+daily_load_data <- load_data %>% 
+  filter(date < as.Date("2010-01-01")) %>%
+  select(h1:h24) %>%
+  rowSums(na.rm = FALSE) %>%
+  msts(seasonal.periods =c(7,365.25), start = c(2005, 1, 1))
+
+autoplot(daily_load_data)
+
+# Adding more TBD
+
+
 ```
