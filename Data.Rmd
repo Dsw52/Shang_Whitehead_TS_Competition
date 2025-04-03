@@ -53,8 +53,9 @@ autoplot(daily_load_data)
 
 ```
 
+# First Forecast
 
-```{r Super Basic Forecast}
+```{r First Forecast}
 
 # Basic Seasonal Naive Forecast
 daily_load_data_train <- load_data %>%
