@@ -23,6 +23,7 @@ library(zoo)
 library(kableExtra)
 library(readxl)
 library(dplyr)
+library(cowplot)
 
 
 # Assuming data folder in same location as the active folder
@@ -54,14 +55,19 @@ autoplot(daily_load_data)
 
 # Initial Model
 
-```{r Initial Model}
+```{r Initial Arima Model}
+
+# simple model
+daily_load_data_ts_simple <- ts(daily_load_data, frequency = 365)
+#arima
+model_auto_simple <- auto.arima(daily_load_data_ts_simple)
+summary(model_auto_simple)
+
 
 # decompose the series 
 decompose_daily_load_data <- decompose(daily_load_data, type = "additive")
-
 # plot the decomposed series
 plot(decompose_daily_load_data)
-
 # deseasonalized series
 deseasonal_daily_load_data <- seasadj(decompose_daily_load_data)
 
@@ -72,10 +78,14 @@ autoplot(deseasonal_daily_load_data,
 
 # auto.arima() 
 model_auto_deseasonal <- auto.arima(deseasonal_daily_load_data)
-
 summary(model_auto_deseasonal)
 
 ```
+
+
+
+
+
 
 
 
