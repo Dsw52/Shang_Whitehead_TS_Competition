@@ -1,0 +1,124 @@
+---
+title: "faulty code"
+author: "DSW"
+date: "2025-04-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Initial Arima Model
+
+```{r Initial Arima Model}
+
+# simple model
+daily_load_data_ts_simple <- ts(daily_load_data, frequency = 365)
+#arima
+model_auto_simple <- auto.arima(daily_load_data_ts_simple)
+summary(model_auto_simple)
+
+
+# decompose the series 
+decompose_daily_load_data <- decompose(daily_load_data, type = "additive")
+# plot the decomposed series
+plot(decompose_daily_load_data)
+# deseasonalized series
+deseasonal_daily_load_data <- seasadj(decompose_daily_load_data)
+
+# plot the deseasonalized series
+autoplot(deseasonal_daily_load_data, 
+         main = "Deseasonalized Daily Load Data", 
+         ylab = "Load Value", xlab = "Time")
+
+# auto.arima() 
+model_auto_deseasonal <- auto.arima(deseasonal_daily_load_data)
+summary(model_auto_deseasonal)
+```
+
+# Original Forecast
+
+```{r Original Forecast}
+# moving to 2010 data
+daily_load_data_forecasting <- load_data %>% 
+  filter(date < as.Date("2010-12-31")) %>%
+  select(h1:h24) %>%
+  rowSums(na.rm = TRUE) %>%
+  msts(seasonal.periods =c(7,365.25), start = c(2005, 1, 1))
+
+autoplot(daily_load_data_forecasting)
+
+# model
+decompose_daily_load_data_forecasting <- decompose(daily_load_data_forecasting, type = "additive")
+plot(decompose_daily_load_data_forecasting)
+deseasonal_daily_load_data_forecasting <- seasadj(decompose_daily_load_data_forecasting)
+model_auto_deseasonal_forecasting <- auto.arima(deseasonal_daily_load_data_forecasting)
+summary(model_auto_deseasonal_forecasting)
+
+
+# forecast period (from January 1, 2011 to February 28, 2011)
+forecast_start_date <- as.Date("2011-01-01")
+forecast_end_date <- as.Date("2011-02-28")
+
+# number of periods for the forecast
+num_periods <- as.integer(forecast_end_date - forecast_start_date) + 1
+
+forecast_deseasonal <- forecast(model_auto_deseasonal_forecasting, h = num_periods)
+
+plot(forecast_deseasonal, 
+     main = "Forecast for Deseasonalized Data (Jan 1, 2011 to Feb 28, 2011)", 
+     ylab = "Deseasonalized Values", xlab = "Time")
+
+
+```
+
+
+
+
+
+```{r}
+# Fixed Original Forecast
+
+```{r Fixed OG Forecast}
+n_for <- 12  # Forecast horizon (12 months)
+
+# Create the `msts` time series object for daily load data with both weekly and yearly seasonalities
+# Here we're assuming `daily_load_data` is your vector or numeric data of daily load values
+daily_load_data_msts <- msts(
+  daily_load_data[1:(length(daily_load_data) - n_for)],  # Exclude the last 12 months for training
+  seasonal.periods = c(7, 365.25)  # Weekly (7 days) and Yearly (365.25 days) seasonalities
+)
+
+# Check the first 15 rows of the msts time series
+head(daily_load_data_msts, 15)
+
+# Check the last 15 rows of the msts time series
+tail(daily_load_data_msts, 15)
+
+# Decompose the 'daily_load_data_msts' using the 'additive' method
+decompose_daily_load_msts <- decompose(daily_load_data_msts, type = "additive")
+
+# Plot the decomposed series
+plot(decompose_daily_load_msts)
+
+MEAN_seas <- meanf(y = daily_load_data_msts, h = 12)
+
+# Checking residuals of the forecast model
+checkresiduals(MEAN_seas)
+
+SNAIVE_seas <- snaive(daily_load_data_msts, h = 12)
+
+# Checking residuals of the Seasonal Naive model
+checkresiduals(SNAIVE_seas)
+
+SARIMA_autofit <- auto.arima(daily_load_data_msts)
+
+# Check the residuals of the SARIMA model
+checkresiduals(SARIMA_autofit)
+
+```
+```
+
+```
+

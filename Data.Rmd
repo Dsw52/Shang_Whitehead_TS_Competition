@@ -53,69 +53,38 @@ autoplot(daily_load_data)
 
 ```
 
-# Initial Model
 
-```{r Initial Arima Model}
+```{r Super Basic Forecast}
 
-# simple model
-daily_load_data_ts_simple <- ts(daily_load_data, frequency = 365)
-#arima
-model_auto_simple <- auto.arima(daily_load_data_ts_simple)
-summary(model_auto_simple)
-
-
-# decompose the series 
-decompose_daily_load_data <- decompose(daily_load_data, type = "additive")
-# plot the decomposed series
-plot(decompose_daily_load_data)
-# deseasonalized series
-deseasonal_daily_load_data <- seasadj(decompose_daily_load_data)
-
-# plot the deseasonalized series
-autoplot(deseasonal_daily_load_data, 
-         main = "Deseasonalized Daily Load Data", 
-         ylab = "Load Value", xlab = "Time")
-
-# auto.arima() 
-model_auto_deseasonal <- auto.arima(deseasonal_daily_load_data)
-summary(model_auto_deseasonal)
-```
-# Original Forecast
-
-```{r Original Forecast}
-# moving to 2010 data
-daily_load_data_forecasting <- load_data %>% 
-  filter(date < as.Date("2010-12-31")) %>%
+# Basic Seasonal Naive Forecast
+daily_load_data_train <- load_data %>%
+  filter(date < as.Date("2010-12-31")) %>% # Filter data up to the end of 2009 for training
   select(h1:h24) %>%
   rowSums(na.rm = TRUE) %>%
   msts(seasonal.periods =c(7,365.25), start = c(2005, 1, 1))
 
-autoplot(daily_load_data_forecasting)
+basic_forecast <- snaive(daily_load_data_train, h = 59) # Forecasting for January and February 2010 (31+28 days)
+print(basic_forecast)
 
-# model
-decompose_daily_load_data_forecasting <- decompose(daily_load_data_forecasting, type = "additive")
-plot(decompose_daily_load_data_forecasting)
-deseasonal_daily_load_data_forecasting <- seasadj(decompose_daily_load_data_forecasting)
-model_auto_deseasonal_forecasting <- auto.arima(deseasonal_daily_load_data_forecasting)
-summary(model_auto_deseasonal_forecasting)
-
-
-# forecast period (from January 1, 2011 to February 28, 2011)
-forecast_start_date <- as.Date("2011-01-01")
-forecast_end_date <- as.Date("2011-02-28")
-
-# number of periods for the forecast
-num_periods <- as.integer(forecast_end_date - forecast_start_date) + 1
-
-forecast_deseasonal <- forecast(model_auto_deseasonal_forecasting, h = num_periods)
-
-plot(forecast_deseasonal, 
-     main = "Forecast for Deseasonalized Data (Jan 1, 2011 to Feb 28, 2011)", 
-     ylab = "Deseasonalized Values", xlab = "Time")
+# plot
+autoplot(daily_load_data_train) +
+  autolayer(basic_forecast, series="Seasonal Naive Forecast", PI=FALSE) +
+  ylab("Daily Load") +
+  xlab("Date")
 
 
+# 1. Formatting the decimal dates as actual dates
+forecast_values <- as.numeric(basic_forecast$mean)
+start_date_forecast <- as.Date("2011-01-01")
+forecast_dates <- seq(start_date_forecast, by = "day", length.out = length(forecast_values))
+
+formatted_forecast <- data.frame(
+  Date = forecast_dates,
+  Forecast = forecast_values
+)
+
+print(formatted_forecast)
 ```
-
 
 
 
