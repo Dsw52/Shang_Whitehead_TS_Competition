@@ -79,6 +79,40 @@ autoplot(deseasonal_daily_load_data,
 # auto.arima() 
 model_auto_deseasonal <- auto.arima(deseasonal_daily_load_data)
 summary(model_auto_deseasonal)
+```
+# Original Forecast
+
+```{r Original Forecast}
+# moving to 2010 data
+daily_load_data_forecasting <- load_data %>% 
+  filter(date < as.Date("2010-12-31")) %>%
+  select(h1:h24) %>%
+  rowSums(na.rm = TRUE) %>%
+  msts(seasonal.periods =c(7,365.25), start = c(2005, 1, 1))
+
+autoplot(daily_load_data_forecasting)
+
+# model
+decompose_daily_load_data_forecasting <- decompose(daily_load_data_forecasting, type = "additive")
+plot(decompose_daily_load_data_forecasting)
+deseasonal_daily_load_data_forecasting <- seasadj(decompose_daily_load_data_forecasting)
+model_auto_deseasonal_forecasting <- auto.arima(deseasonal_daily_load_data_forecasting)
+summary(model_auto_deseasonal_forecasting)
+
+
+# forecast period (from January 1, 2011 to February 28, 2011)
+forecast_start_date <- as.Date("2011-01-01")
+forecast_end_date <- as.Date("2011-02-28")
+
+# number of periods for the forecast
+num_periods <- as.integer(forecast_end_date - forecast_start_date) + 1
+
+forecast_deseasonal <- forecast(model_auto_deseasonal_forecasting, h = num_periods)
+
+plot(forecast_deseasonal, 
+     main = "Forecast for Deseasonalized Data (Jan 1, 2011 to Feb 28, 2011)", 
+     ylab = "Deseasonalized Values", xlab = "Time")
+
 
 ```
 
