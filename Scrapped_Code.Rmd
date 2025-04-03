@@ -1,5 +1,5 @@
 ---
-title: "faulty code"
+title: "Scrapped COde"
 author: "DSW"
 date: "2025-04-03"
 output: html_document
@@ -8,6 +8,12 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+
+This is code we do not need but want to save just in case
+
+
+
 
 # Initial Arima Model
 
