@@ -24,14 +24,12 @@ library(kableExtra)
 library(readxl)
 library(dplyr)
 
+
 # Assuming data folder in same location as the active folder
 load_data <- read_excel(path="../tsa-spring-2025/load.xlsx", col_names=TRUE)
-# Full path without ~
 load_data <- read_excel(path = path.expand("~/Downloads/load.xlsx"), col_names = TRUE)
-
-# Now, load_data is the data from the correct file path
-
 load_data <- mutate(load_data, date = ymd(date))
+
 relative_humidity_data <- read_excel(path="../tsa-spring-2025/relative_humidity.xlsx", col_names=TRUE)
 relative_humidity_data <- read_excel(path = path.expand("~/Downloads/relative_humidity.xlsx"), col_names = TRUE)
 
@@ -43,16 +41,41 @@ temperature_data <- read_excel(path = path.expand("~/Downloads/temperature.xlsx"
 sub_template <- read_excel(path="../tsa-spring-2025/submission_template.xlsx", col_names=TRUE)
 sub_template <- read_excel(path = path.expand("~/Downloads/submission_template.xlsx"), col_names = TRUE)
 
-# Convert hourly data into daily training data (2005-2009)
+# Convert hourly data into daily training data (1/2005-12/2009)
 daily_load_data <- load_data %>% 
-  filter(date < as.Date("2009-01-01")) %>%
+  filter(date < as.Date("2009-12-31")) %>%
   select(h1:h24) %>%
-  rowSums(na.rm = FALSE) %>%
+  rowSums(na.rm = TRUE) %>%
   msts(seasonal.periods =c(7,365.25), start = c(2005, 1, 1))
 
 autoplot(daily_load_data)
 
-# Adding more TBD
+```
 
+# Initial Model
+
+```{r Initial Model}
+
+# decompose the series 
+decompose_daily_load_data <- decompose(daily_load_data, type = "additive")
+
+# plot the decomposed series
+plot(decompose_daily_load_data)
+
+# deseasonalized series
+deseasonal_daily_load_data <- seasadj(decompose_daily_load_data)
+
+# plot the deseasonalized series
+autoplot(deseasonal_daily_load_data, 
+         main = "Deseasonalized Daily Load Data", 
+         ylab = "Load Value", xlab = "Time")
+
+# auto.arima() 
+model_auto_deseasonal <- auto.arima(deseasonal_daily_load_data)
+
+summary(model_auto_deseasonal)
 
 ```
+
+
+
