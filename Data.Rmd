@@ -25,18 +25,18 @@ library(readxl)
 library(dplyr)
 library(cowplot)
 
-
-# Assuming data folder in same location as the active folder
+# Assuming data folder in same location as this repo
 load_data <- read_excel(path="../tsa-spring-2025/load.xlsx", col_names=TRUE)
-load_data <- read_excel(path = path.expand("~/Downloads/load.xlsx"), col_names = TRUE)
-load_data <- mutate(load_data, date = ymd(date))
-
 relative_humidity_data <- read_excel(path="../tsa-spring-2025/relative_humidity.xlsx", col_names=TRUE)
-relative_humidity_data <- read_excel(path = path.expand("~/Downloads/relative_humidity.xlsx"), col_names = TRUE)
-
 temperature_data <- read_excel(path="../tsa-spring-2025/temperature.xlsx", col_names=TRUE)
+
+
+# Assuming data in Downloads folder
+load_data <- read_excel(path = path.expand("~/Downloads/load.xlsx"), col_names = TRUE)
+relative_humidity_data <- read_excel(path = path.expand("~/Downloads/relative_humidity.xlsx"), col_names = TRUE)
 temperature_data <- read_excel(path = path.expand("~/Downloads/temperature.xlsx"), col_names = TRUE)
 
+load_data <- mutate(load_data, date = ymd(date))
 
 # do we need this read in?
 sub_template <- read_excel(path="../tsa-spring-2025/submission_template.xlsx", col_names=TRUE)
@@ -59,12 +59,12 @@ autoplot(daily_load_data)
 
 # Basic Seasonal Naive Forecast
 daily_load_data_train <- load_data %>%
-  filter(date < as.Date("2010-12-31")) %>% # Filter data up to the end of 2009 for training
+  filter(date < as.Date("2010-12-31")) %>% # Filter data up to the end of 2010 for initial model training
   select(h1:h24) %>%
   rowSums(na.rm = TRUE) %>%
   msts(seasonal.periods =c(7,365.25), start = c(2005, 1, 1))
 
-basic_forecast <- snaive(daily_load_data_train, h = 59) # Forecasting for January and February 2010 (31+28 days)
+basic_forecast <- snaive(daily_load_data_train, h = 59) # Forecasting for January and February 2011 (31+28 days)
 print(basic_forecast)
 
 # plot
@@ -80,11 +80,13 @@ start_date_forecast <- as.Date("2011-01-01")
 forecast_dates <- seq(start_date_forecast, by = "day", length.out = length(forecast_values))
 
 formatted_forecast <- data.frame(
-  Date = forecast_dates,
-  Forecast = forecast_values
+  date = forecast_dates,
+  load = forecast_values
 )
 
 print(formatted_forecast)
+
+write.csv(formatted_forecast, "naive_forecast.csv", row.names=FALSE)
 ```
 
 
