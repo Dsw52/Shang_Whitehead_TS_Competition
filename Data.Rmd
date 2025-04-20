@@ -43,13 +43,19 @@ sub_template <- read_excel(path="../tsa-spring-2025/submission_template.xlsx", c
 sub_template <- read_excel(path = path.expand("~/Downloads/submission_template.xlsx"), col_names = TRUE)
 
 # Convert hourly data into daily training data (1/2005-12/2009)
-daily_load_data <- load_data %>% 
-  filter(date < as.Date("2009-12-31")) %>%
+training_load_data <- load_data %>% 
+  filter(date < as.Date("2010-01-01")) %>%
   select(h1:h24) %>%
   rowMeans(na.rm = TRUE) %>%
   msts(seasonal.periods =c(7,365.25), start = c(2005, 1, 1))
 
-autoplot(daily_load_data)
+# Without date cutoff
+all_load_data <- load_data %>%
+  select(h1:h24) %>%
+  rowMeans(na.rm = TRUE) %>%
+  msts(seasonal.periods =c(7,365.25), start=c(2005, 1))
+
+autoplot(training_load_data)
 
 ```
 
@@ -57,18 +63,12 @@ autoplot(daily_load_data)
 
 ```{r First Forecast}
 
-# Basic Seasonal Naive Forecast
-daily_load_data_train <- load_data %>%
-  filter(date <= as.Date("2010-12-31")) %>% # Filter data up to the end of 2010 for initial model training
-  select(h1:h24) %>%
-  rowMeans(na.rm = TRUE) %>%
-  msts(seasonal.periods =c(7,365.25), start=c(2005, 1))
 
-basic_forecast <- snaive(daily_load_data_train, h = 59) # Forecasting for January and February 2011 (31+28 days)
+basic_forecast <- snaive(all_load_data, h = 59) # Forecasting for January and February 2011 (31+28 days)
 print(basic_forecast)
 
 # plot
-autoplot(daily_load_data_train) +
+autoplot(all_load_data) +
   autolayer(basic_forecast$mean, series="Seasonal Naive Forecast", PI=FALSE) +
   ylab("Daily Load") +
   xlab("Date")
@@ -98,5 +98,121 @@ nnetar(x_reg=c(temp, hum), )
 ```
 
 
+# ETS Forecast
+
+```{r}
+
+ets_fit <- stlf(training_load_data, h=365)
+autoplot(ets_fit)
 
 
+autoplot(all_load_data)+
+  autolayer(ets_fit)
+
+ets_fit_all <- stlf(all_load_data, h=59)
+autoplot(ets_fit_all)
+
+# 1. Formatting the decimal dates as actual dates
+forecast_values <- as.numeric(ets_fit_all$mean)
+start_date_forecast <- as.Date("2011-01-01")
+forecast_dates <- seq(start_date_forecast, by = "day", length.out = length(forecast_values))
+
+formatted_forecast <- data.frame(
+  date = forecast_dates,
+  load = forecast_values
+)
+
+print(formatted_forecast)
+
+write.csv(formatted_forecast, "ets.csv", row.names=FALSE)
+```
+
+
+# ARIMA + fourier Forecast
+
+```{r}
+
+arima_fit <- auto.arima(training_load_data, seasonal=FALSE, lambda=0, xreg=fourier(training_load_data, K=c(2,12)))
+arima_forecast <- forecast(arima_fit, xreg=fourier(training_load_data, K=c(2,12), h=59), h=59)
+
+
+best_aicc <- Inf
+best_k <- NULL
+best_model <- NULL
+
+for (k1 in 1:2) {
+  for (k2 in 1:12) {
+    xreg <- fourier(all_load_data, K=c(k1, k2))
+    fit <- auto.arima(all_load_data, seasonal=FALSE, xreg=xreg, lambda=0)
+    if (fit$aicc < best_aicc) {
+      best_aicc <- fit$aicc
+      best_k <- c(k1, k2)
+      best_model <- fit
+    }
+  }
+}
+best_k
+
+autoplot(all_load_data)+
+  autolayer(arima_forecast)
+
+arima_fit <- auto.arima(all_load_data, seasonal=FALSE, lambda=0, xreg=fourier(all_load_data, K=best_k))
+all_fit <- forecast(arima_fit, xreg=fourier(all_load_data, K=best_k, h=59), h=59)
+
+autoplot(all_fit)
+
+# 1. Formatting the decimal dates as actual dates
+forecast_values <- as.numeric(all_fit$mean)
+formatted_forecast <- data.frame(
+  date = forecast_dates,
+  load = forecast_values
+)
+
+print(formatted_forecast)
+
+write.csv(formatted_forecast, "fourier.csv", row.names=FALSE)
+```
+
+# Neural network
+
+```{r}
+
+arima_fit <- auto.arima(training_load_data, seasonal=FALSE, lambda=0, xreg=fourier(training_load_data, K=c(2,12)))
+arima_forecast <- forecast(arima_fit, xreg=fourier(training_load_data, K=c(2,12), h=59), h=59)
+
+
+best_aicc <- Inf
+best_k <- NULL
+best_model <- NULL
+
+for (k1 in 1:2) {
+  for (k2 in 1:12) {
+    xreg <- fourier(all_load_data, K=c(k1, k2))
+    fit <- auto.arima(all_load_data, seasonal=FALSE, xreg=xreg, lambda=0)
+    if (fit$aicc < best_aicc) {
+      best_aicc <- fit$aicc
+      best_k <- c(k1, k2)
+      best_model <- fit
+    }
+  }
+}
+best_k
+
+autoplot(all_load_data)+
+  autolayer(arima_forecast)
+
+arima_fit <- auto.arima(all_load_data, seasonal=FALSE, lambda=0, xreg=fourier(all_load_data, K=best_k))
+all_fit <- forecast(arima_fit, xreg=fourier(all_load_data, K=best_k, h=59), h=59)
+
+autoplot(all_fit)
+
+# 1. Formatting the decimal dates as actual dates
+forecast_values <- as.numeric(all_fit$mean)
+formatted_forecast <- data.frame(
+  date = forecast_dates,
+  load = forecast_values
+)
+
+print(formatted_forecast)
+
+write.csv(formatted_forecast, "fourier.csv", row.names=FALSE)
