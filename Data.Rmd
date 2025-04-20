@@ -46,7 +46,7 @@ sub_template <- read_excel(path = path.expand("~/Downloads/submission_template.x
 daily_load_data <- load_data %>% 
   filter(date < as.Date("2009-12-31")) %>%
   select(h1:h24) %>%
-  rowSums(na.rm = TRUE) %>%
+  rowMeans(na.rm = TRUE) %>%
   msts(seasonal.periods =c(7,365.25), start = c(2005, 1, 1))
 
 autoplot(daily_load_data)
@@ -61,7 +61,7 @@ autoplot(daily_load_data)
 daily_load_data_train <- load_data %>%
   filter(date <= as.Date("2010-12-31")) %>% # Filter data up to the end of 2010 for initial model training
   select(h1:h24) %>%
-  rowSums(na.rm = TRUE) %>%
+  rowMeans(na.rm = TRUE) %>%
   msts(seasonal.periods =c(7,365.25), start=c(2005, 1))
 
 basic_forecast <- snaive(daily_load_data_train, h = 59) # Forecasting for January and February 2011 (31+28 days)
@@ -87,6 +87,13 @@ formatted_forecast <- data.frame(
 print(formatted_forecast)
 
 write.csv(formatted_forecast, "naive_forecast.csv", row.names=FALSE)
+
+# forecast humidity + temp, then take into account
+# add another variable similar to fourier terms, add to x_reg
+nnetar(x_reg=c(temp, hum), )
+# forecast temp and humidity separately
+# forecast with nnetar again
+
 
 ```
 
