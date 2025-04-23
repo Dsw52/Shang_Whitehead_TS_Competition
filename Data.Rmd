@@ -177,9 +177,12 @@ write.csv(formatted_forecast, "fourier.csv", row.names=FALSE)
 
 ```{r}
 
-arima_fit <- auto.arima(training_load_data, seasonal=FALSE, lambda=0, xreg=fourier(training_load_data, K=c(2,12)))
-arima_forecast <- forecast(arima_fit, xreg=fourier(training_load_data, K=c(2,12), h=59), h=59)
+nnfit <- nnetar(training_load_data,
+                p=1,
+                P=0,
+                xreg=fourier(training_load_data, K=c(2,2)))
 
+nnfor <- forecast(nnfit, h=59, xreg=fourier(training_load_data, K=c(2,2), h=59))
 
 best_aicc <- Inf
 best_k <- NULL
