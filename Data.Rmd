@@ -219,3 +219,47 @@ formatted_forecast <- data.frame(
 print(formatted_forecast)
 
 write.csv(formatted_forecast, "fourier.csv", row.names=FALSE)
+```
+
+```{r TBATS}
+# Fit the TBATS model to the training time series
+TBATS_fit <- tbats(training_load_data)
+
+# Forecast the next 59 periods
+TBATS_for <- forecast(TBATS_fit, h = 59)
+
+# Plot forecast only
+autoplot(TBATS_for) + 
+  ylab("Load") +
+  ggtitle("TBATS Forecast: Next 59 Periods")
+
+# Plot full observed data with forecast
+autoplot(all_load_data) +
+  autolayer(TBATS_for, series = "TBATS Forecast", PI = FALSE) +
+  ylab("Load") +
+  ggtitle("Observed Data and TBATS Forecast (59-Step Horizon)")
+```
+```{r Tbats csv}
+# Extract forecasted values from TBATS model
+forecast_values_tbats <- as.numeric(TBATS_for$mean)
+
+# Set the start date of the forecast
+start_date_tbats <- as.Date("2011-01-01")  # Adjust as needed
+
+# Create a sequence of daily dates matching forecast length
+forecast_dates_tbats <- seq(start_date_tbats, by = "day", length.out = length(forecast_values_tbats))
+
+# Combine into a dataframe
+formatted_forecast_tbats <- data.frame(
+  date = forecast_dates_tbats,
+  load = forecast_values_tbats
+)
+
+# Print the forecast
+print(formatted_forecast_tbats)
+
+# Write to CSV
+write.csv(formatted_forecast_tbats, "tbats_forecast.csv", row.names = FALSE)
+
+```
+
