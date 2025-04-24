@@ -301,3 +301,52 @@ write.csv(formatted_forecast_nn, "nn_forecast26.csv", row.names = FALSE)
 
 ```
 
+NN 36
+```{r}
+# Fit the Neural Network Model with Fourier terms (K = 3, 6)
+NN_fit_36 <- nnetar(training_load_data,
+                    p = 1,
+                    P = 1,
+                    xreg = fourier(training_load_data, K = c(3, 6)))
+
+# Create future Fourier terms for 59-day forecast horizon
+future_fourier_36 <- fourier(training_load_data, K = c(3, 6), h = 59)
+
+# Forecast using the fitted neural net model
+NN_forec_36 <- forecast(NN_fit_36, h = 59, xreg = future_fourier_36)
+
+# Plot the forecasted values
+autoplot(NN_forec_36) +
+  ylab("Load") +
+  ggtitle("Neural Network Forecast (59 Days) with K = c(3, 6)")
+
+# Plot the model forecast with full observed series
+autoplot(all_load_data) +  # assuming this is the full time series
+  autolayer(NN_forec_36, series = "Neural Network", PI = FALSE) +
+  ylab("Load") +
+  ggtitle("Observed Data and Neural Network Forecast (K = c(3, 6))")
+
+```
+NN 36 CSV
+```{r}
+# Extract forecasted values from Neural Network model with K = c(3, 6)
+forecast_values_nn_36 <- as.numeric(NN_forec_36$mean)
+
+# Set forecast start date
+start_date_nn_36 <- as.Date("2011-01-01")  # Adjust as needed to match your dataset
+
+# Create forecast date sequence
+forecast_dates_nn_36 <- seq(start_date_nn_36, by = "day", length.out = length(forecast_values_nn_36))
+
+# Format into a data frame
+formatted_forecast_nn_36 <- data.frame(
+  date = forecast_dates_nn_36,
+  load = forecast_values_nn_36
+)
+
+# Print and export to CSV
+print(formatted_forecast_nn_36)
+write.csv(formatted_forecast_nn_36, "nn_forecast36.csv", row.names = FALSE)
+
+```
+
