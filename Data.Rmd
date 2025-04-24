@@ -242,24 +242,62 @@ autoplot(all_load_data) +
 ```{r Tbats csv}
 # Extract forecasted values from TBATS model
 forecast_values_tbats <- as.numeric(TBATS_for$mean)
-
-# Set the start date of the forecast
 start_date_tbats <- as.Date("2011-01-01")  # Adjust as needed
-
-# Create a sequence of daily dates matching forecast length
 forecast_dates_tbats <- seq(start_date_tbats, by = "day", length.out = length(forecast_values_tbats))
-
-# Combine into a dataframe
 formatted_forecast_tbats <- data.frame(
   date = forecast_dates_tbats,
   load = forecast_values_tbats
 )
 
-# Print the forecast
 print(formatted_forecast_tbats)
-
-# Write to CSV
 write.csv(formatted_forecast_tbats, "tbats_forecast.csv", row.names = FALSE)
+
+```
+NN 2,6
+```{r}
+# Fit the Neural Network Model with Fourier terms
+NN_fit_26 <- nnetar(training_load_data,
+                    p = 1,
+                    P = 1,
+                    xreg = fourier(training_load_data, K = c(2, 6)))
+
+# Create future Fourier terms for 59-day forecast horizon
+future_fourier <- fourier(training_load_data, K = c(2, 6), h = 59)
+
+# Forecast using the fitted neural net model
+NN_forec_26 <- forecast(NN_fit_26, h = 59, xreg = future_fourier)
+
+# Plot the forecasted values
+autoplot(NN_forec_26) +
+  ylab("Load") +
+  ggtitle("Neural Network Forecast (59 Days)")
+
+# Plot the model forecast with full observed series
+autoplot(all_load_data) +  # assuming this is the full time series
+  autolayer(NN_forec_26, series = "Neural Network", PI = FALSE) +
+  ylab("Load") +
+  ggtitle("Observed Data and NN Forecast")
+
+```
+```{r NN 26 csv}
+# Extract forecasted values from Neural Network model
+forecast_values_nn <- as.numeric(NN_forec_26$mean)
+
+# Set forecast start date
+start_date_nn <- as.Date("2011-01-01")  # Adjust as needed to match your dataset
+
+# Create forecast date sequence
+forecast_dates_nn <- seq(start_date_nn, by = "day", length.out = length(forecast_values_nn))
+
+# Format into a data frame
+formatted_forecast_nn <- data.frame(
+  date = forecast_dates_nn,
+  load = forecast_values_nn
+)
+
+# Print and export to CSV
+print(formatted_forecast_nn)
+write.csv(formatted_forecast_nn, "nn_forecast26.csv", row.names = FALSE)
 
 ```
 
