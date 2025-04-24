@@ -637,7 +637,7 @@ print(formatted_forecast_nn_34)
 write.csv(formatted_forecast_nn_34, "nn_forecast34.csv", row.names = FALSE)
 
 ```
-NN 4,4
+NN 1,6
 
 ```{r}
 # Fit the Neural Network Model with Fourier terms (K = 1, 6)
@@ -754,4 +754,299 @@ averaged_nn <- merged_nn[, c("date", "load")]
 # Write the result to a new CSV
 write_csv(averaged_nn, "nnOG+nn24.csv")
 ```
+Arima 23
+
+```{r}
+
+# ---- Fit ARIMA model with Fourier terms (K = 2, 3) ----
+ARIMA_Fourier_fit23 <- auto.arima(training_load_data, 
+                                   seasonal = FALSE, 
+                                   lambda = 0,
+                                   xreg = fourier(training_load_data, K = c(2, 3)))
+
+# ---- Create Fourier terms for 59-day forecast horizon ----
+future_fourier_23 <- fourier(training_load_data, K = c(2, 3), h = 59)
+
+# ---- Forecast using the fitted ARIMA model ----
+ARIMA_Fourier_forec23 <- forecast(ARIMA_Fourier_fit23,
+                                  xreg = future_fourier_23,
+                                  h = 59)
+
+# ---- Plot forecast results ----
+autoplot(ARIMA_Fourier_forec23) + 
+  ylab("Load") + 
+  ggtitle("ARIMA + Fourier Forecast (K = c(2, 3))")
+
+# ---- Plot model forecast with full observed series ----
+autoplot(all_load_data) + 
+  autolayer(ARIMA_Fourier_forec23, series = "ARIMA_FOURIER", PI = FALSE) +
+  ylab("Load") +
+  ggtitle("Observed Load and ARIMA + Fourier Forecast")
+
+# ---- Extract and save forecasted values ----
+forecast_values_arima <- as.numeric(ARIMA_Fourier_forec23$mean)
+
+# Adjust this to match the correct start date of the forecast
+start_date_arima <- as.Date("2011-01-01")  
+
+# Create sequence of forecast dates
+forecast_dates_arima <- seq(start_date_arima, by = "day", length.out = length(forecast_values_arima))
+
+# Format as a data frame
+formatted_forecast_arima <- data.frame(
+  date = forecast_dates_arima,
+  load = forecast_values_arima
+)
+
+# Print and export
+print(formatted_forecast_arima)
+write.csv(formatted_forecast_arima, "arima_fourier23.csv", row.names = FALSE)
+
+```
+ARIMA 3,6
+
+```{r}
+# ---- Fit ARIMA model with Fourier terms (K = 3, 6) ----
+ARIMA_Fourier_fit36 <- auto.arima(training_load_data, 
+                                   seasonal = FALSE, 
+                                   lambda = 0,
+                                   xreg = fourier(training_load_data, K = c(3, 6)))
+
+# ---- Create Fourier terms for 59-day forecast horizon ----
+future_fourier_36 <- fourier(training_load_data, K = c(3, 6), h = 59)
+
+# ---- Forecast using the fitted ARIMA model ----
+ARIMA_Fourier_forec36 <- forecast(ARIMA_Fourier_fit36,
+                                  xreg = future_fourier_36,
+                                  h = 59)
+
+# ---- Plot forecast results ----
+autoplot(ARIMA_Fourier_forec36) + 
+  ylab("Load") + 
+  ggtitle("ARIMA + Fourier Forecast (K = c(3, 6))")
+
+# ---- Plot model forecast with full observed series ----
+autoplot(all_load_data) + 
+  autolayer(ARIMA_Fourier_forec36, series = "ARIMA_FOURIER", PI = FALSE) +
+  ylab("Load") +
+  ggtitle("Observed Load and ARIMA + Fourier Forecast")
+
+# ---- Extract and save forecasted values ----
+forecast_values_arima_36 <- as.numeric(ARIMA_Fourier_forec36$mean)
+
+# Adjust this to match the correct start date of the forecast
+start_date_arima_36 <- as.Date("2011-01-01")  
+
+# Create sequence of forecast dates
+forecast_dates_arima_36 <- seq(start_date_arima_36, by = "day", length.out = length(forecast_values_arima_36))
+
+# Format as a data frame
+formatted_forecast_arima_36 <- data.frame(
+  date = forecast_dates_arima_36,
+  load = forecast_values_arima_36
+)
+
+# Print and export
+print(formatted_forecast_arima_36)
+write.csv(formatted_forecast_arima_36, "arima_fourier36.csv", row.names = FALSE)
+
+```
+
+ARIMA 1,2
+
+```{r}
+library(forecast)
+library(ggplot2)
+
+# Fit ARIMA model with Fourier terms (K = c(1, 2)) as exogenous regressors
+ARIMA_Fourier_fit12 <- auto.arima(training_load_data, 
+                                   seasonal = FALSE, 
+                                   lambda = 0,
+                                   xreg = fourier(training_load_data, K = c(1, 2)))
+
+# Create future Fourier terms for the 59-day forecast horizon
+future_fourier_12 <- fourier(training_load_data, K = c(1, 2), h = 59)
+
+# Forecast using the fitted ARIMA model
+ARIMA_Fourier_forec12 <- forecast(ARIMA_Fourier_fit12,
+                                  xreg = future_fourier_12,
+                                  h = 59)
+
+# Plot forecast results
+autoplot(ARIMA_Fourier_forec12) + 
+  ylab("Load") +
+  ggtitle("ARIMA Fourier Forecast (K = c(1, 2))")
+
+# Plot model forecast with full observed series
+autoplot(all_load_data) +  # assuming this is the full time series
+  autolayer(ARIMA_Fourier_forec12, series = "ARIMA_Fourier", PI = FALSE) +
+  ylab("Load") +
+  ggtitle("Observed Data and ARIMA Fourier Forecast (K = c(1, 2))")
+
+# ---- Extract and Save Forecast Values ----
+
+# Extract forecasted values
+forecast_values_arima_12 <- as.numeric(ARIMA_Fourier_forec12$mean)
+
+# Set forecast start date (adjust as needed)
+start_date_arima_12 <- as.Date("2011-01-01")
+
+# Create forecast date sequence
+forecast_dates_arima_12 <- seq(start_date_arima_12, by = "day", length.out = length(forecast_values_arima_12))
+
+# Format into data frame
+formatted_forecast_arima_12 <- data.frame(
+  date = forecast_dates_arima_12,
+  load = forecast_values_arima_12
+)
+
+# Print and export to CSV
+print(formatted_forecast_arima_12)
+write.csv(formatted_forecast_arima_12, "arima_fourier_12.csv", row.names = FALSE)
+
+```
+ARIMA FULL year
+
+```{r}
+library(forecast)
+library(ggplot2)
+
+# ---- Fit ARIMA model with Fourier terms (K = 1, 4) ----
+ARIMA_Fourier_fit_1_4 <- auto.arima(training_load_data,
+                                    seasonal = FALSE,
+                                    lambda = 0,
+                                    xreg = fourier(training_load_data, K = c(1, 4)))
+
+# ---- Create future Fourier terms for 59-day forecast ----
+future_fourier_1_4 <- fourier(training_load_data, K = c(1, 4), h = 59)
+
+# ---- Forecast using the fitted model ----
+ARIMA_Fourier_forec_1_4 <- forecast(ARIMA_Fourier_fit_1_4,
+                                    xreg = future_fourier_1_4,
+                                    h = 59)
+
+# ---- Plot forecasted values ----
+autoplot(ARIMA_Fourier_forec_1_4) +
+  ylab("Load") +
+  ggtitle("ARIMA Fourier Forecast (K = c(1, 4))")
+
+# ---- Plot model forecast with full observed data ----
+autoplot(all_load_data) +
+  autolayer(ARIMA_Fourier_forec_1_4, series = "ARIMA_Fourier", PI = FALSE) +
+  ylab("Load") +
+  ggtitle("Observed Data and ARIMA Fourier Forecast (K = c(1, 4))")
+
+# ---- Extract and Save Forecasted Values ----
+forecast_values_arima_1_4 <- as.numeric(ARIMA_Fourier_forec_1_4$mean)
+start_date_arima_1_4 <- as.Date("2011-01-01")  # Adjust if needed
+
+forecast_dates_arima_1_4 <- seq(start_date_arima_1_4, by = "day", length.out = length(forecast_values_arima_1_4))
+
+formatted_forecast_arima_1_4 <- data.frame(
+  date = forecast_dates_arima_1_4,
+  load = forecast_values_arima_1_4
+)
+
+# ---- Print and export to CSV ----
+print(formatted_forecast_arima_1_4)
+write.csv(formatted_forecast_arima_1_4, "arima_fourier_1_4.csv", row.names = FALSE)
+
+```
+ARIMA 2,2
+
+```{r}
+library(forecast)
+library(ggplot2)
+
+# ---- Fit ARIMA model with Fourier terms (K = 2, 2) ----
+ARIMA_Fourier_fit_2_2 <- auto.arima(training_load_data,
+                                    seasonal = FALSE,
+                                    lambda = 0,
+                                    xreg = fourier(training_load_data, K = c(2, 2)))
+
+# ---- Create future Fourier terms for 59-day forecast ----
+future_fourier_2_2 <- fourier(training_load_data, K = c(2, 2), h = 59)
+
+# ---- Forecast using the fitted model ----
+ARIMA_Fourier_forec_2_2 <- forecast(ARIMA_Fourier_fit_2_2,
+                                    xreg = future_fourier_2_2,
+                                    h = 59)
+
+# ---- Plot forecasted values ----
+autoplot(ARIMA_Fourier_forec_2_2) +
+  ylab("Load") +
+  ggtitle("ARIMA Fourier Forecast (K = c(2, 2))")
+
+# ---- Plot model forecast with full observed data ----
+autoplot(all_load_data) +
+  autolayer(ARIMA_Fourier_forec_2_2, series = "ARIMA_Fourier", PI = FALSE) +
+  ylab("Load") +
+  ggtitle("Observed Data and ARIMA Fourier Forecast (K = c(2, 2))")
+
+# ---- Extract and Save Forecasted Values ----
+forecast_values_arima_2_2 <- as.numeric(ARIMA_Fourier_forec_2_2$mean)
+start_date_arima_2_2 <- as.Date("2011-01-01")  # Adjust if needed
+
+forecast_dates_arima_2_2 <- seq(start_date_arima_2_2, by = "day", length.out = length(forecast_values_arima_2_2))
+
+formatted_forecast_arima_2_2 <- data.frame(
+  date = forecast_dates_arima_2_2,
+  load = forecast_values_arima_2_2
+)
+
+# ---- Print and export to CSV ----
+print(formatted_forecast_arima_2_2)
+write.csv(formatted_forecast_arima_2_2, "arima_fourier_2_2.csv", row.names = FALSE)
+
+```
+
+NN 31
+
+```{r}
+# Fit the Neural Network Model with Fourier terms (K = 3, 1)
+NN_fit_31 <- nnetar(training_load_data,
+                    p = 1,
+                    P = 1,
+                    xreg = fourier(training_load_data, K = c(3, 1)))
+
+# Create future Fourier terms for 59-day forecast horizon
+future_fourier_31 <- fourier(training_load_data, K = c(3, 1), h = 59)
+
+# Forecast using the fitted neural net model
+NN_forec_31 <- forecast(NN_fit_31, h = 59, xreg = future_fourier_31)
+
+# Plot the forecasted values
+autoplot(NN_forec_31) +
+  ylab("Load") +
+  ggtitle("Neural Network Forecast (59 Days) with K = c(3, 1)")
+
+# Plot the model forecast with full observed series
+autoplot(all_load_data) +  # assuming this is the full time series
+  autolayer(NN_forec_31, series = "Neural Network", PI = FALSE) +
+  ylab("Load") +
+  ggtitle("Observed Data and Neural Network Forecast (K = c(3, 1))")
+
+# ---- Extract and save the forecasted values ----
+
+# Extract forecasted values
+forecast_values_nn_31 <- as.numeric(NN_forec_31$mean)
+
+# Set forecast start date
+start_date_nn_31 <- as.Date("2011-01-01")  # Adjust to match your dataset start
+
+# Create forecast date sequence
+forecast_dates_nn_31 <- seq(start_date_nn_31, by = "day", length.out = length(forecast_values_nn_31))
+
+# Format into a data frame
+formatted_forecast_nn_31 <- data.frame(
+  date = forecast_dates_nn_31,
+  load = forecast_values_nn_31
+)
+
+# Print and export to CSV
+print(formatted_forecast_nn_31)
+write.csv(formatted_forecast_nn_31, "nn_forecast31.csv", row.names = FALSE)
+
+```
+
 
