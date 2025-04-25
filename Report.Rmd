@@ -1,0 +1,111 @@
+---
+title: "Report"
+author: "Daniel & Ellie"
+date: "2025-04-25"
+output: html_document
+---
+
+
+# Top Five Models
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Import Data and Packages
+```{r Data and Packages include=FALSE}
+library(lubridate)
+library(ggplot2)
+library(forecast)
+library(Kendall)
+library(tseries)
+library(outliers)
+library(tidyverse)
+library(smooth)
+library(zoo)
+library(kableExtra)
+library(readxl)
+library(dplyr)
+library(cowplot)
+
+# Assuming data folder in same location as this repo
+load_data <- read_excel(path="../tsa-spring-2025/load.xlsx", col_names=TRUE)
+relative_humidity_data <- read_excel(path="../tsa-spring-2025/relative_humidity.xlsx", col_names=TRUE)
+temperature_data <- read_excel(path="../tsa-spring-2025/temperature.xlsx", col_names=TRUE)
+
+
+# Assuming data in Downloads folder
+load_data <- read_excel(path = path.expand("~/Downloads/load.xlsx"), col_names = TRUE)
+relative_humidity_data <- read_excel(path = path.expand("~/Downloads/relative_humidity.xlsx"), col_names = TRUE)
+temperature_data <- read_excel(path = path.expand("~/Downloads/temperature.xlsx"), col_names = TRUE)
+
+load_data <- mutate(load_data, date = ymd(date))
+
+# Convert hourly data into daily training data (1/2005-12/2009)
+training_load_data <- load_data %>% 
+  filter(date < as.Date("2010-01-01")) %>%
+  select(h1:h24) %>%
+  rowMeans(na.rm = TRUE) %>%
+  msts(seasonal.periods =c(7,365.25), start = c(2005, 1, 1))
+
+# Without date cutoff
+all_load_data <- load_data %>%
+  select(h1:h24) %>%
+  rowMeans(na.rm = TRUE) %>%
+  msts(seasonal.periods =c(7,365.25), start=c(2005, 1))
+
+```
+
+## Neural network selection (responsible for 2/5)
+This was run several times, two of which ended up in the top 5!
+
+```{r}
+best_mape <- Inf
+best_params <- list()
+
+for (k1 in 1:3) {
+  for (k2 in 1:4) {
+    xreg_train <- fourier(training_load_data, K =c(k1, k2))
+  
+    for (p in 1:4) {
+      for (P in 0:1) {
+  
+        nnfit <- nnetar(training_load_data, p=p, P=P, xreg=xreg_train, repeats=20)
+        nnfor <- forecast(nnfit, h=59, xreg=fourier(training_load_data, K =c(k1, k2), h=59))
+        acc <- accuracy(nnfor$mean, all_load_data)
+        mape <- acc["Test set", "MAPE"]
+        print(mape)
+        print(list(p=p, P=P, k1=k1, k2=k2))
+        if (mape < best_mape) {
+          best_mape <- mape
+          best_params <- list(p=p, P=P, k1=k1, k2=k2)
+        }
+
+      }
+      }
+  }
+  
+}
+
+best_mape
+best_params
+nnfit <- nnetar(all_load_data,
+                p=best_params$p,
+                P=best_params$P,
+                repeats=20,
+                xreg=fourier(all_load_data, K=c(best_params$k1, best_params$k2)))
+nnfor <- forecast(nnfit, h=59, xreg=fourier(all_load_data, K=c(best_params$k1, best_params$k2), h=59))
+
+
+# to CSV
+forecast_values <- as.numeric(nnfor$mean)
+formatted_forecast <- data.frame(
+  date = forecast_dates,
+  load = forecast_values
+)
+
+print(formatted_forecast)
+
+write.csv(formatted_forecast, "nn.csv", row.names=FALSE)
+```
+
+

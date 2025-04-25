@@ -90,7 +90,7 @@ write.csv(formatted_forecast, "naive_forecast.csv", row.names=FALSE)
 
 # forecast humidity + temp, then take into account
 # add another variable similar to fourier terms, add to x_reg
-nnetar(x_reg=c(temp, hum), )
+# nnetar(x_reg=c(temp, hum), )
 # forecast temp and humidity separately
 # forecast with nnetar again
 
@@ -171,46 +171,51 @@ formatted_forecast <- data.frame(
 print(formatted_forecast)
 
 write.csv(formatted_forecast, "fourier.csv", row.names=FALSE)
+
 ```
 
-# Neural network
-
+# Neural Network
 ```{r}
 
-nnfit <- nnetar(training_load_data,
-                p=1,
-                P=0,
-                xreg=fourier(training_load_data, K=c(2,2)))
+best_mape <- Inf
+best_params <- list()
 
-nnfor <- forecast(nnfit, h=59, xreg=fourier(training_load_data, K=c(2,2), h=59))
+for (k1 in 1:3) {
+  for (k2 in 1:4) {
+    xreg_train <- fourier(training_load_data, K =c(k1, k2))
+  
+    for (p in 1:4) {
+      for (P in 0:1) {
+  
+        nnfit <- nnetar(training_load_data, p=p, P=P, xreg=xreg_train, repeats=20)
+        nnfor <- forecast(nnfit, h=59, xreg=fourier(training_load_data, K =c(k1, k2), h=59))
+        acc <- accuracy(nnfor$mean, all_load_data)
+        mape <- acc["Test set", "MAPE"]
+        print(mape)
+        print(list(p=p, P=P, k1=k1, k2=k2))
+        if (mape < best_mape) {
+          best_mape <- mape
+          best_params <- list(p=p, P=P, k1=k1, k2=k2)
+        }
 
-best_aicc <- Inf
-best_k <- NULL
-best_model <- NULL
-
-for (k1 in 1:2) {
-  for (k2 in 1:12) {
-    xreg <- fourier(all_load_data, K=c(k1, k2))
-    fit <- auto.arima(all_load_data, seasonal=FALSE, xreg=xreg, lambda=0)
-    if (fit$aicc < best_aicc) {
-      best_aicc <- fit$aicc
-      best_k <- c(k1, k2)
-      best_model <- fit
-    }
+      }
+      }
   }
+  
 }
-best_k
 
-autoplot(all_load_data)+
-  autolayer(arima_forecast)
+best_mape
+best_params
+nnfit <- nnetar(all_load_data,
+                p=best_params$p,
+                P=best_params$P,
+                repeats=20,
+                xreg=fourier(all_load_data, K=c(best_params$k1, best_params$k2)))
+nnfor <- forecast(nnfit, h=59, xreg=fourier(all_load_data, K=c(best_params$k1, best_params$k2), h=59))
 
-arima_fit <- auto.arima(all_load_data, seasonal=FALSE, lambda=0, xreg=fourier(all_load_data, K=best_k))
-all_fit <- forecast(arima_fit, xreg=fourier(all_load_data, K=best_k, h=59), h=59)
 
-autoplot(all_fit)
-
-# 1. Formatting the decimal dates as actual dates
-forecast_values <- as.numeric(all_fit$mean)
+# to CSV
+forecast_values <- as.numeric(nnfor$mean)
 formatted_forecast <- data.frame(
   date = forecast_dates,
   load = forecast_values
@@ -218,7 +223,7 @@ formatted_forecast <- data.frame(
 
 print(formatted_forecast)
 
-write.csv(formatted_forecast, "fourier.csv", row.names=FALSE)
+write.csv(formatted_forecast, "nn.csv", row.names=FALSE)
 ```
 
 ```{r TBATS}
@@ -1177,4 +1182,6 @@ lines(predictions_rescaled, col = "blue")
 legend("bottomright", legend = c("Actual", "Predicted"), col = c("black", "blue"), lty = 1)
 
 ```
+
+
 
