@@ -1049,4 +1049,132 @@ write.csv(formatted_forecast_nn_31, "nn_forecast31.csv", row.names = FALSE)
 
 ```
 
+Hybrid model
+
+```{r}
+
+# ---- Fourier settings ----
+h <- 59
+K_vals <- c(2, 4)  # or even just K = 2
+fourier_train <- fourier(training_load_data, K = K_vals)
+
+
+# ---- 1. Fit ARIMA (non-seasonal) with Fourier terms ----
+fourier_train <- fourier(training_load_data, K = K_vals)
+arima_fit <- auto.arima(training_load_data, seasonal = FALSE, lambda = 0, xreg = fourier_train)
+
+# ---- 2. Extract ARIMA residuals ----
+arima_resid <- residuals(arima_fit)
+
+# ---- 3. Fit Neural Network on residuals (with same Fourier terms) ----
+nn_fit_resid <- nnetar(arima_resid, xreg = fourier_train)
+
+# ---- 4. Forecast Fourier terms for horizon ----
+fourier_future <- fourier(training_load_data, K = K_vals, h = h)
+
+# ---- 5. Forecast both models ----
+arima_forecast <- forecast(arima_fit, h = h, xreg = fourier_future)
+nn_forecast_resid <- forecast(nn_fit_resid, h = h, xreg = fourier_future)
+
+# ---- 6. Combine forecasts ----
+hybrid_forecast <- arima_forecast$mean + nn_forecast_resid$mean
+
+# ---- 7. Plot forecast on top of observed data ----
+autoplot(all_load_data) +
+  autolayer(hybrid_forecast, series = "Hybrid Forecast", PI = FALSE) +
+  ylab("Load") +
+  ggtitle("Observed Load and Hybrid ARIMA + NN Forecast")
+
+# ---- 8. Save forecast to CSV ----
+forecast_values_hybrid <- as.numeric(hybrid_forecast)
+start_date_hybrid <- as.Date("2011-01-01")  # Update this to match your real forecast start
+forecast_dates_hybrid <- seq(start_date_hybrid, by = "day", length.out = h)
+
+formatted_forecast_hybrid <- data.frame(
+  date = forecast_dates_hybrid,
+  load = forecast_values_hybrid
+)
+
+print(formatted_forecast_hybrid)
+write.csv(formatted_forecast_hybrid, "hybrid_forecast.csv", row.names = FALSE)
+
+```
+LSTM Attempt
+
+```{r}
+library(keras)
+library(tidyverse)
+
+# ---- 1. Prepare your time series data ----
+
+data <- as.numeric(training_load_data)  # or your own time series vector
+
+# Normalize (min-max scaling)
+data_min <- min(data)
+data_max <- max(data)
+scaled_data <- (data - data_min) / (data_max - data_min)
+
+# ---- 2. Create sequences (past 14 days -> next day) ----
+
+timesteps <- 14
+
+create_sequences <- function(data, timesteps) {
+  X <- list()
+  y <- list()
+  for (i in seq_len(length(data) - timesteps)) {
+    X[[i]] <- data[i:(i + timesteps - 1)]
+    y[[i]] <- data[i + timesteps]
+  }
+  list(
+    X = array(unlist(X), dim = c(length(X), timesteps, 1)),
+    y = array(unlist(y), dim = c(length(y), 1))
+  )
+}
+
+sequences <- create_sequences(scaled_data, timesteps)
+
+# ---- 3. Train/test split ----
+
+n <- dim(sequences$X)[1]
+train_size <- floor(n * 0.8)
+
+X_train <- sequences$X[1:train_size,,]
+y_train <- sequences$y[1:train_size]
+
+X_test <- sequences$X[(train_size+1):n,,]
+y_test <- sequences$y[(train_size+1):n]
+
+# ---- 4. Build GRU model ----
+model <- keras_model_sequential() %>%
+  layer_gru(units = 50, input_shape = c(timesteps, 1)) %>%
+  layer_dense(units = 1)
+
+# ---- 5. Compile the model ----
+model %>% compile(
+  loss = "mean_squared_error",
+  optimizer = "adam"
+)
+
+# ---- 6. Train the model ----
+model %>% fit(
+  X_train, y_train,
+  epochs = 50,
+  batch_size = 32,
+  validation_split = 0.2,
+  verbose = 1
+)
+
+# ---- 7. Predict and invert scaling ----
+predictions <- model %>% predict(X_test)
+
+# Rescale predictions
+predictions_rescaled <- predictions * (data_max - data_min) + data_min
+y_test_rescaled <- y_test * (data_max - data_min) + data_min
+
+# ---- 8. Plot the forecast vs actual ----
+plot(y_test_rescaled, type = "l", col = "black", main = "GRU Forecast vs Actual", ylab = "Load")
+lines(predictions_rescaled, col = "blue")
+legend("bottomright", legend = c("Actual", "Predicted"), col = c("black", "blue"), lty = 1)
+
+```
 
