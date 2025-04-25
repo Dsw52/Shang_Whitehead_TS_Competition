@@ -73,8 +73,6 @@ for (k1 in 1:3) {
         nnfor <- forecast(nnfit, h=59, xreg=fourier(training_load_data, K =c(k1, k2), h=59))
         acc <- accuracy(nnfor$mean, all_load_data)
         mape <- acc["Test set", "MAPE"]
-        print(mape)
-        print(list(p=p, P=P, k1=k1, k2=k2))
         if (mape < best_mape) {
           best_mape <- mape
           best_params <- list(p=p, P=P, k1=k1, k2=k2)
