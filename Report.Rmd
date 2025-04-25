@@ -105,7 +105,7 @@ formatted_forecast <- data.frame(
 
 print(formatted_forecast)
 
-write.csv(formatted_forecast, "nn.csv", row.names=FALSE)
+# write.csv(formatted_forecast, "nn.csv", row.names=FALSE)
 ```
 
 
