@@ -76,8 +76,6 @@ for (k1 in 1:3) {
         nnfor <- forecast(nnfit, h=59, xreg=fourier(training_load_data, K =c(k1, k2), h=59))
         acc <- accuracy(nnfor$mean, all_load_data)
         mape <- acc["Test set", "MAPE"]
-        print(mape)
-        print(list(p=p, P=P, k1=k1, k2=k2))
         if (mape < best_mape) {
           best_mape <- mape
           best_params <- list(p=p, P=P, k1=k1, k2=k2)
@@ -113,6 +111,9 @@ print(formatted_forecast)
 
 write.csv(formatted_forecast, "nn#.csv", row.names=FALSE)
 ```
+
+### Merged NN1 and NN3
+
 ```{r Merged NN1 and NN3, warning=FALSE}
 
 # Read the two CSV files
@@ -132,6 +133,9 @@ averagednn1_3 <- mergednn1_3[, c("date", "load")]
 write_csv(averagednn1_3, "nn1+nn3.csv")
 
 ```
+
+### Merged NN1NN3NN4
+
 ```{r Merged NN1NN3NN4, warning=FALSE}
 nn1 <- read_csv("~/Downloads/nn1.csv", col_names = TRUE)
 nn3 <- read_csv("nn3.csv", col_names = TRUE)
