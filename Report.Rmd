@@ -2,7 +2,9 @@
 title: "Report"
 author: "Daniel & Ellie"
 date: "2025-04-25"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 
@@ -12,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Import Data and Packages
-```{r Data and Packages include=FALSE}
+```{r Data and Packages, include=FALSE}
 library(lubridate)
 library(ggplot2)
 library(forecast)
@@ -27,13 +29,7 @@ library(readxl)
 library(dplyr)
 library(cowplot)
 
-# Assuming data folder in same location as this repo
-load_data <- read_excel(path="../tsa-spring-2025/load.xlsx", col_names=TRUE)
-relative_humidity_data <- read_excel(path="../tsa-spring-2025/relative_humidity.xlsx", col_names=TRUE)
-temperature_data <- read_excel(path="../tsa-spring-2025/temperature.xlsx", col_names=TRUE)
-
-
-# Assuming data in Downloads folder
+# Read in data
 load_data <- read_excel(path = path.expand("~/Downloads/load.xlsx"), col_names = TRUE)
 relative_humidity_data <- read_excel(path = path.expand("~/Downloads/relative_humidity.xlsx"), col_names = TRUE)
 temperature_data <- read_excel(path = path.expand("~/Downloads/temperature.xlsx"), col_names = TRUE)
@@ -55,10 +51,17 @@ all_load_data <- load_data %>%
 
 ```
 
-## Neural network selection (responsible for 2/5)
-This was run several times, two of which ended up in the top 5!
+## Neural network selection (responsible for 5/5 most accurate submissions)
 
-```{r}
+Neural networks use past values and seasonal patterns to model complex time series like load data. Unlike traditional models like ARIMA, they can capture non-linear relationships in the data. By using lagged inputs and seasonal signals, neural networks handle both short- and long-term patterns, similar to SARIMA models. However, they offer an advantage by learning more complex, non-linear behaviors in the data.
+
+In our original neural network models, the autoregressive parameters were set to p=1 and P=1. This allows the models to learn both short-term dependencies and long-term seasonal structure. Combined with the Fourier terms, this structure enhances the model’s ability to capture the complex, non-linear, and multi-seasonal behavior characteristic of ERCOT load data. We manipulated the K parameters, and found that the K=c(1,4) and K=c(2,4) models were the most accurate in terms of accuracy in forecasting. 
+
+In the model below, we implemented a function to automatically select the most accurate parameters for autoregressive inputs and Fourier terms. One of the top-performing configurations was p = 4, P = 0, k1 = 1, k2 = 2, which achieved a MAPE of 21.68631—though it resulted in a slightly higher score on the Kaggle submission. This setup showed improved accuracy over our earlier models, which used p = 1, P = 1, highlighting the benefit of including more lagged inputs and removing seasonal lags.
+
+After running multiple trials, we found that models NN1, NN3, and NN4 consistently produced the best results in terms of MAPE. Among these, NN3 was the most accurate with a MAPE of 21.98, followed by NN1 at 22.20, and NN4 at 22.29. For the Kaggle submissions, we also experimented with averaged forecasts, such as nn1nn3nn4 and nn1nn3, aiming to smooth out predictions. While these combinations offered stable forecasts, their accuracy was slightly lower than that of our best individual model, NN3.
+
+```{r Best Model NN}
 best_mape <- Inf
 best_params <- list()
 
@@ -95,9 +98,12 @@ nnfit <- nnetar(all_load_data,
                 xreg=fourier(all_load_data, K=c(best_params$k1, best_params$k2)))
 nnfor <- forecast(nnfit, h=59, xreg=fourier(all_load_data, K=c(best_params$k1, best_params$k2), h=59))
 
+# 1. Formatting the decimal dates as actual dates
+start_date_forecast <- as.Date("2011-01-01")
+forecast_values <- as.numeric(nnfor$mean)
+forecast_dates <- seq(start_date_forecast, by = "day", length.out = length(forecast_values))
 
 # to CSV
-forecast_values <- as.numeric(nnfor$mean)
 formatted_forecast <- data.frame(
   date = forecast_dates,
   load = forecast_values
@@ -105,7 +111,44 @@ formatted_forecast <- data.frame(
 
 print(formatted_forecast)
 
-write.csv(formatted_forecast, "nn.csv", row.names=FALSE)
+write.csv(formatted_forecast, "nn#.csv", row.names=FALSE)
 ```
+```{r Merged NN1 and NN3, warning=FALSE}
+
+# Read the two CSV files
+nn1 <- read_csv("~/Downloads/nn1.csv")   
+nn3 <- read_csv("nn3.csv") 
+
+# Merge the datasets by 'date'
+mergednn1_3 <- merge(nn1, nn3, by = "date", suffixes = c("_1", "_3"))
+
+# Find the average of the two forecasts
+mergednn1_3$load <- rowMeans(mergednn1_3[, c("load_1", "load_3")])
+
+# Keep only the date and averaged load
+averagednn1_3 <- mergednn1_3[, c("date", "load")]
+
+# Write the result to a new CSV file
+write_csv(averagednn1_3, "nn1+nn3.csv")
+
+```
+```{r Merged NN1NN3NN4, warning=FALSE}
+nn1 <- read_csv("~/Downloads/nn1.csv", col_names = TRUE)
+nn3 <- read_csv("nn3.csv", col_names = TRUE)
+nn4 <- read_csv("nn4.csv", col_names = TRUE)
+
+mergednn1_3 <- merge(nn1, nn3, by = "date", suffixes = c("_1", "_3"))
+
+mergednn1_3_4 <- merge(mergednn1_3, nn4, by = "date")
+names(mergednn1_3_4)[names(mergednn1_3_4) == "load"] <- "load_4"
+
+mergednn1_3_4$load <- rowMeans(mergednn1_3_4[, c("load_1", "load_3", "load_4")])
+
+averagednn1_3_4 <- mergednn1_3_4[, c("date", "load")]
+
+write_csv(averagednn1_3_4, "nn1+nn3+nn4.csv")
+
+```
+
 
 

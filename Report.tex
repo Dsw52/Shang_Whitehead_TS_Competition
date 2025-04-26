@@ -1,0 +1,1693 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Report},
+  pdfauthor={Daniel \& Ellie},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Report}
+\author{Daniel \& Ellie}
+\date{2025-04-25}
+
+\begin{document}
+\maketitle
+
+\section{Top Five Models}\label{top-five-models}
+
+\section{Import Data and Packages}\label{import-data-and-packages}
+
+\subsection{Neural network selection (responsible for 5/5 most accurate
+submissions)}\label{neural-network-selection-responsible-for-55-most-accurate-submissions}
+
+Neural networks use past values and seasonal patterns to model complex
+time series like load data. Unlike traditional models like ARIMA, they
+can capture non-linear relationships in the data. By using lagged inputs
+and seasonal signals, neural networks handle both short- and long-term
+patterns, similar to SARIMA models. However, they offer an advantage by
+learning more complex, non-linear behaviors in the data.
+
+In our original neural network models, the autoregressive parameters
+were set to p=1 and P=1. This allows the models to learn both short-term
+dependencies and long-term seasonal structure. Combined with the Fourier
+terms, this structure enhances the model's ability to capture the
+complex, non-linear, and multi-seasonal behavior characteristic of ERCOT
+load data. We manipulated the K parameters, and found that the K=c(1,4)
+and K=c(2,4) models were the most accurate in terms of accuracy in
+forecasting.
+
+In the model below, we implemented a function to automatically select
+the most accurate parameters for autoregressive inputs and Fourier
+terms. One of the top-performing configurations was p = 4, P = 0, k1 =
+1, k2 = 2, which achieved a MAPE of 21.68631---though it resulted in a
+slightly higher score on the Kaggle submission. This setup showed
+improved accuracy over our earlier models, which used p = 1, P = 1,
+highlighting the benefit of including more lagged inputs and removing
+seasonal lags.
+
+After running multiple trials, we found that models NN1, NN3, and NN4
+consistently produced the best results in terms of MAPE. Among these,
+NN3 was the most accurate with a MAPE of 21.98, followed by NN1 at
+22.20, and NN4 at 22.29. For the Kaggle submissions, we also
+experimented with averaged forecasts, such as nn1nn3nn4 and nn1nn3,
+aiming to smooth out predictions. While these combinations offered
+stable forecasts, their accuracy was slightly lower than that of our
+best individual model, NN3.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{best\_mape }\OtherTok{\textless{}{-}} \ConstantTok{Inf}
+\NormalTok{best\_params }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{()}
+
+\ControlFlowTok{for}\NormalTok{ (k1 }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{) \{}
+  \ControlFlowTok{for}\NormalTok{ (k2 }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{) \{}
+\NormalTok{    xreg\_train }\OtherTok{\textless{}{-}} \FunctionTok{fourier}\NormalTok{(training\_load\_data, }\AttributeTok{K =}\FunctionTok{c}\NormalTok{(k1, k2))}
+  
+    \ControlFlowTok{for}\NormalTok{ (p }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{) \{}
+      \ControlFlowTok{for}\NormalTok{ (P }\ControlFlowTok{in} \DecValTok{0}\SpecialCharTok{:}\DecValTok{1}\NormalTok{) \{}
+  
+\NormalTok{        nnfit }\OtherTok{\textless{}{-}} \FunctionTok{nnetar}\NormalTok{(training\_load\_data, }\AttributeTok{p=}\NormalTok{p, }\AttributeTok{P=}\NormalTok{P, }\AttributeTok{xreg=}\NormalTok{xreg\_train, }\AttributeTok{repeats=}\DecValTok{20}\NormalTok{)}
+\NormalTok{        nnfor }\OtherTok{\textless{}{-}} \FunctionTok{forecast}\NormalTok{(nnfit, }\AttributeTok{h=}\DecValTok{59}\NormalTok{, }\AttributeTok{xreg=}\FunctionTok{fourier}\NormalTok{(training\_load\_data, }\AttributeTok{K =}\FunctionTok{c}\NormalTok{(k1, k2), }\AttributeTok{h=}\DecValTok{59}\NormalTok{))}
+\NormalTok{        acc }\OtherTok{\textless{}{-}} \FunctionTok{accuracy}\NormalTok{(nnfor}\SpecialCharTok{$}\NormalTok{mean, all\_load\_data)}
+\NormalTok{        mape }\OtherTok{\textless{}{-}}\NormalTok{ acc[}\StringTok{"Test set"}\NormalTok{, }\StringTok{"MAPE"}\NormalTok{]}
+        \FunctionTok{print}\NormalTok{(mape)}
+        \FunctionTok{print}\NormalTok{(}\FunctionTok{list}\NormalTok{(}\AttributeTok{p=}\NormalTok{p, }\AttributeTok{P=}\NormalTok{P, }\AttributeTok{k1=}\NormalTok{k1, }\AttributeTok{k2=}\NormalTok{k2))}
+        \ControlFlowTok{if}\NormalTok{ (mape }\SpecialCharTok{\textless{}}\NormalTok{ best\_mape) \{}
+\NormalTok{          best\_mape }\OtherTok{\textless{}{-}}\NormalTok{ mape}
+\NormalTok{          best\_params }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{p=}\NormalTok{p, }\AttributeTok{P=}\NormalTok{P, }\AttributeTok{k1=}\NormalTok{k1, }\AttributeTok{k2=}\NormalTok{k2)}
+\NormalTok{        \}}
+
+\NormalTok{      \}}
+\NormalTok{      \}}
+\NormalTok{  \}}
+  
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 23.20399
+## $p
+## [1] 1
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 1
+## 
+## [1] 24.13754
+## $p
+## [1] 1
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 1
+## 
+## [1] 23.80148
+## $p
+## [1] 2
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 1
+## 
+## [1] 24.32748
+## $p
+## [1] 2
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 1
+## 
+## [1] 22.97822
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 1
+## 
+## [1] 24.78316
+## $p
+## [1] 3
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 1
+## 
+## [1] 23.07054
+## $p
+## [1] 4
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 1
+## 
+## [1] 23.75569
+## $p
+## [1] 4
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 1
+## 
+## [1] 22.83709
+## $p
+## [1] 1
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 2
+## 
+## [1] 23.31392
+## $p
+## [1] 1
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 2
+## 
+## [1] 23.44049
+## $p
+## [1] 2
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 2
+## 
+## [1] 23.67047
+## $p
+## [1] 2
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 2
+## 
+## [1] 21.98232
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 2
+## 
+## [1] 23.13964
+## $p
+## [1] 3
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 2
+## 
+## [1] 22.46625
+## $p
+## [1] 4
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 2
+## 
+## [1] 22.63263
+## $p
+## [1] 4
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 2
+## 
+## [1] 24.179
+## $p
+## [1] 1
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 3
+## 
+## [1] 23.82371
+## $p
+## [1] 1
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 3
+## 
+## [1] 25.49144
+## $p
+## [1] 2
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 3
+## 
+## [1] 24.87361
+## $p
+## [1] 2
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 3
+## 
+## [1] 23.88739
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 3
+## 
+## [1] 22.68515
+## $p
+## [1] 3
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 3
+## 
+## [1] 24.26886
+## $p
+## [1] 4
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 3
+## 
+## [1] 24.33774
+## $p
+## [1] 4
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 3
+## 
+## [1] 27.04111
+## $p
+## [1] 1
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 4
+## 
+## [1] 24.38629
+## $p
+## [1] 1
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 4
+## 
+## [1] 27.13868
+## $p
+## [1] 2
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 4
+## 
+## [1] 25.22716
+## $p
+## [1] 2
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 4
+## 
+## [1] 25.6227
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 4
+## 
+## [1] 25.63872
+## $p
+## [1] 3
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 4
+## 
+## [1] 27.45674
+## $p
+## [1] 4
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 4
+## 
+## [1] 27.29963
+## $p
+## [1] 4
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 4
+## 
+## [1] 23.29256
+## $p
+## [1] 1
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 1
+## 
+## [1] 24.42416
+## $p
+## [1] 1
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 1
+## 
+## [1] 23.66759
+## $p
+## [1] 2
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 1
+## 
+## [1] 24.55514
+## $p
+## [1] 2
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 1
+## 
+## [1] 22.21496
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 1
+## 
+## [1] 23.61272
+## $p
+## [1] 3
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 1
+## 
+## [1] 22.80235
+## $p
+## [1] 4
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 1
+## 
+## [1] 24.50175
+## $p
+## [1] 4
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 1
+## 
+## [1] 23.01807
+## $p
+## [1] 1
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 2
+## 
+## [1] 23.7769
+## $p
+## [1] 1
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 2
+## 
+## [1] 23.55297
+## $p
+## [1] 2
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 2
+## 
+## [1] 24.75722
+## $p
+## [1] 2
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 2
+## 
+## [1] 22.3589
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 2
+## 
+## [1] 22.91964
+## $p
+## [1] 3
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 2
+## 
+## [1] 22.15567
+## $p
+## [1] 4
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 2
+## 
+## [1] 24.4125
+## $p
+## [1] 4
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 2
+## 
+## [1] 24.85123
+## $p
+## [1] 1
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 3
+## 
+## [1] 24.10848
+## $p
+## [1] 1
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 3
+## 
+## [1] 25.45936
+## $p
+## [1] 2
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 3
+## 
+## [1] 25.17763
+## $p
+## [1] 2
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 3
+## 
+## [1] 23.70861
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 3
+## 
+## [1] 23.16529
+## $p
+## [1] 3
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 3
+## 
+## [1] 23.71764
+## $p
+## [1] 4
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 3
+## 
+## [1] 23.47764
+## $p
+## [1] 4
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 3
+## 
+## [1] 26.61964
+## $p
+## [1] 1
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 4
+## 
+## [1] 24.73004
+## $p
+## [1] 1
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 4
+## 
+## [1] 27.8985
+## $p
+## [1] 2
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 4
+## 
+## [1] 26.31544
+## $p
+## [1] 2
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 4
+## 
+## [1] 26.92827
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 4
+## 
+## [1] 23.48153
+## $p
+## [1] 3
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 4
+## 
+## [1] 24.733
+## $p
+## [1] 4
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 4
+## 
+## [1] 25.89345
+## $p
+## [1] 4
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 2
+## 
+## $k2
+## [1] 4
+## 
+## [1] 23.7889
+## $p
+## [1] 1
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 1
+## 
+## [1] 24.4956
+## $p
+## [1] 1
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 1
+## 
+## [1] 23.24644
+## $p
+## [1] 2
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 1
+## 
+## [1] 24.93882
+## $p
+## [1] 2
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 1
+## 
+## [1] 22.80081
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 1
+## 
+## [1] 24.87782
+## $p
+## [1] 3
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 1
+## 
+## [1] 23.72377
+## $p
+## [1] 4
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 1
+## 
+## [1] 26.19853
+## $p
+## [1] 4
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 1
+## 
+## [1] 22.94787
+## $p
+## [1] 1
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 2
+## 
+## [1] 24.30859
+## $p
+## [1] 1
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 2
+## 
+## [1] 23.30144
+## $p
+## [1] 2
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 2
+## 
+## [1] 23.40518
+## $p
+## [1] 2
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 2
+## 
+## [1] 22.73042
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 2
+## 
+## [1] 25.07723
+## $p
+## [1] 3
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 2
+## 
+## [1] 22.09276
+## $p
+## [1] 4
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 2
+## 
+## [1] 24.06126
+## $p
+## [1] 4
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 2
+## 
+## [1] 24.36336
+## $p
+## [1] 1
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 3
+## 
+## [1] 24.99667
+## $p
+## [1] 1
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 3
+## 
+## [1] 25.23416
+## $p
+## [1] 2
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 3
+## 
+## [1] 24.79333
+## $p
+## [1] 2
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 3
+## 
+## [1] 22.7455
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 3
+## 
+## [1] 23.29402
+## $p
+## [1] 3
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 3
+## 
+## [1] 22.10314
+## $p
+## [1] 4
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 3
+## 
+## [1] 22.28936
+## $p
+## [1] 4
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 3
+## 
+## [1] 26.90443
+## $p
+## [1] 1
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 4
+## 
+## [1] 24.96388
+## $p
+## [1] 1
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 4
+## 
+## [1] 27.59564
+## $p
+## [1] 2
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 4
+## 
+## [1] 24.27695
+## $p
+## [1] 2
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 4
+## 
+## [1] 25.64986
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 4
+## 
+## [1] 22.56449
+## $p
+## [1] 3
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 4
+## 
+## [1] 24.57275
+## $p
+## [1] 4
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 4
+## 
+## [1] 23.22359
+## $p
+## [1] 4
+## 
+## $P
+## [1] 1
+## 
+## $k1
+## [1] 3
+## 
+## $k2
+## [1] 4
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{best\_mape}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 21.98232
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{best\_params}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $p
+## [1] 3
+## 
+## $P
+## [1] 0
+## 
+## $k1
+## [1] 1
+## 
+## $k2
+## [1] 2
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nnfit }\OtherTok{\textless{}{-}} \FunctionTok{nnetar}\NormalTok{(all\_load\_data,}
+                \AttributeTok{p=}\NormalTok{best\_params}\SpecialCharTok{$}\NormalTok{p,}
+                \AttributeTok{P=}\NormalTok{best\_params}\SpecialCharTok{$}\NormalTok{P,}
+                \AttributeTok{repeats=}\DecValTok{20}\NormalTok{,}
+                \AttributeTok{xreg=}\FunctionTok{fourier}\NormalTok{(all\_load\_data, }\AttributeTok{K=}\FunctionTok{c}\NormalTok{(best\_params}\SpecialCharTok{$}\NormalTok{k1, best\_params}\SpecialCharTok{$}\NormalTok{k2)))}
+\NormalTok{nnfor }\OtherTok{\textless{}{-}} \FunctionTok{forecast}\NormalTok{(nnfit, }\AttributeTok{h=}\DecValTok{59}\NormalTok{, }\AttributeTok{xreg=}\FunctionTok{fourier}\NormalTok{(all\_load\_data, }\AttributeTok{K=}\FunctionTok{c}\NormalTok{(best\_params}\SpecialCharTok{$}\NormalTok{k1, best\_params}\SpecialCharTok{$}\NormalTok{k2), }\AttributeTok{h=}\DecValTok{59}\NormalTok{))}
+
+\CommentTok{\# 1. Formatting the decimal dates as actual dates}
+\NormalTok{start\_date\_forecast }\OtherTok{\textless{}{-}} \FunctionTok{as.Date}\NormalTok{(}\StringTok{"2011{-}01{-}01"}\NormalTok{)}
+\NormalTok{forecast\_values }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(nnfor}\SpecialCharTok{$}\NormalTok{mean)}
+\NormalTok{forecast\_dates }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(start\_date\_forecast, }\AttributeTok{by =} \StringTok{"day"}\NormalTok{, }\AttributeTok{length.out =} \FunctionTok{length}\NormalTok{(forecast\_values))}
+
+\CommentTok{\# to CSV}
+\NormalTok{formatted\_forecast }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{date =}\NormalTok{ forecast\_dates,}
+  \AttributeTok{load =}\NormalTok{ forecast\_values}
+\NormalTok{)}
+
+\FunctionTok{print}\NormalTok{(formatted\_forecast)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          date     load
+## 1  2011-01-01 4934.825
+## 2  2011-01-02 4970.909
+## 3  2011-01-03 5043.159
+## 4  2011-01-04 4980.492
+## 5  2011-01-05 4867.700
+## 6  2011-01-06 4827.373
+## 7  2011-01-07 4859.300
+## 8  2011-01-08 4851.602
+## 9  2011-01-09 4779.669
+## 10 2011-01-10 4723.184
+## 11 2011-01-11 4699.352
+## 12 2011-01-12 4692.934
+## 13 2011-01-13 4734.506
+## 14 2011-01-14 4817.778
+## 15 2011-01-15 4843.010
+## 16 2011-01-16 4787.623
+## 17 2011-01-17 4745.488
+## 18 2011-01-18 4729.046
+## 19 2011-01-19 4736.940
+## 20 2011-01-20 4799.213
+## 21 2011-01-21 4887.854
+## 22 2011-01-22 4912.276
+## 23 2011-01-23 4856.589
+## 24 2011-01-24 4813.950
+## 25 2011-01-25 4765.694
+## 26 2011-01-26 4738.955
+## 27 2011-01-27 4794.286
+## 28 2011-01-28 4882.974
+## 29 2011-01-29 4900.161
+## 30 2011-01-30 4834.596
+## 31 2011-01-31 4765.868
+## 32 2011-02-01 4681.383
+## 33 2011-02-02 4620.964
+## 34 2011-02-03 4660.216
+## 35 2011-02-04 4751.376
+## 36 2011-02-05 4754.837
+## 37 2011-02-06 4673.496
+## 38 2011-02-07 4576.121
+## 39 2011-02-08 4470.567
+## 40 2011-02-09 4400.541
+## 41 2011-02-10 4438.928
+## 42 2011-02-11 4513.656
+## 43 2011-02-12 4501.511
+## 44 2011-02-13 4421.897
+## 45 2011-02-14 4302.528
+## 46 2011-02-15 4188.357
+## 47 2011-02-16 4116.540
+## 48 2011-02-17 4141.370
+## 49 2011-02-18 4183.695
+## 50 2011-02-19 4165.903
+## 51 2011-02-20 4081.915
+## 52 2011-02-21 3911.497
+## 53 2011-02-22 3784.912
+## 54 2011-02-23 3748.837
+## 55 2011-02-24 3785.932
+## 56 2011-02-25 3816.009
+## 57 2011-02-26 3805.934
+## 58 2011-02-27 3739.339
+## 59 2011-02-28 3590.031
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{write.csv}\NormalTok{(formatted\_forecast, }\StringTok{"nn\#.csv"}\NormalTok{, }\AttributeTok{row.names=}\ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Read the two CSV files}
+\NormalTok{nn1 }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"\textasciitilde{}/Downloads/nn1.csv"}\NormalTok{)   }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Rows: 59 Columns: 2
+## -- Column specification --------------------------------------------------------
+## Delimiter: ","
+## dbl  (1): load
+## date (1): date
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nn3 }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"nn3.csv"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Rows: 59 Columns: 2
+## -- Column specification --------------------------------------------------------
+## Delimiter: ","
+## dbl  (1): load
+## date (1): date
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Merge the datasets by \textquotesingle{}date\textquotesingle{}}
+\NormalTok{mergednn1\_3 }\OtherTok{\textless{}{-}} \FunctionTok{merge}\NormalTok{(nn1, nn3, }\AttributeTok{by =} \StringTok{"date"}\NormalTok{, }\AttributeTok{suffixes =} \FunctionTok{c}\NormalTok{(}\StringTok{"\_1"}\NormalTok{, }\StringTok{"\_3"}\NormalTok{))}
+
+\CommentTok{\# Find the average of the two forecasts}
+\NormalTok{mergednn1\_3}\SpecialCharTok{$}\NormalTok{load }\OtherTok{\textless{}{-}} \FunctionTok{rowMeans}\NormalTok{(mergednn1\_3[, }\FunctionTok{c}\NormalTok{(}\StringTok{"load\_1"}\NormalTok{, }\StringTok{"load\_3"}\NormalTok{)])}
+
+\CommentTok{\# Keep only the date and averaged load}
+\NormalTok{averagednn1\_3 }\OtherTok{\textless{}{-}}\NormalTok{ mergednn1\_3[, }\FunctionTok{c}\NormalTok{(}\StringTok{"date"}\NormalTok{, }\StringTok{"load"}\NormalTok{)]}
+
+\CommentTok{\# Write the result to a new CSV file}
+\FunctionTok{write\_csv}\NormalTok{(averagednn1\_3, }\StringTok{"nn1+nn3.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nn1 }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"\textasciitilde{}/Downloads/nn1.csv"}\NormalTok{, }\AttributeTok{col\_names =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Rows: 59 Columns: 2
+## -- Column specification --------------------------------------------------------
+## Delimiter: ","
+## dbl  (1): load
+## date (1): date
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nn3 }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"nn3.csv"}\NormalTok{, }\AttributeTok{col\_names =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Rows: 59 Columns: 2
+## -- Column specification --------------------------------------------------------
+## Delimiter: ","
+## dbl  (1): load
+## date (1): date
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nn4 }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"nn4.csv"}\NormalTok{, }\AttributeTok{col\_names =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Rows: 59 Columns: 2
+## -- Column specification --------------------------------------------------------
+## Delimiter: ","
+## dbl  (1): load
+## date (1): date
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mergednn1\_3 }\OtherTok{\textless{}{-}} \FunctionTok{merge}\NormalTok{(nn1, nn3, }\AttributeTok{by =} \StringTok{"date"}\NormalTok{, }\AttributeTok{suffixes =} \FunctionTok{c}\NormalTok{(}\StringTok{"\_1"}\NormalTok{, }\StringTok{"\_3"}\NormalTok{))}
+
+\NormalTok{mergednn1\_3\_4 }\OtherTok{\textless{}{-}} \FunctionTok{merge}\NormalTok{(mergednn1\_3, nn4, }\AttributeTok{by =} \StringTok{"date"}\NormalTok{)}
+\FunctionTok{names}\NormalTok{(mergednn1\_3\_4)[}\FunctionTok{names}\NormalTok{(mergednn1\_3\_4) }\SpecialCharTok{==} \StringTok{"load"}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{"load\_4"}
+
+\NormalTok{mergednn1\_3\_4}\SpecialCharTok{$}\NormalTok{load }\OtherTok{\textless{}{-}} \FunctionTok{rowMeans}\NormalTok{(mergednn1\_3\_4[, }\FunctionTok{c}\NormalTok{(}\StringTok{"load\_1"}\NormalTok{, }\StringTok{"load\_3"}\NormalTok{, }\StringTok{"load\_4"}\NormalTok{)])}
+
+\NormalTok{averagednn1\_3\_4 }\OtherTok{\textless{}{-}}\NormalTok{ mergednn1\_3\_4[, }\FunctionTok{c}\NormalTok{(}\StringTok{"date"}\NormalTok{, }\StringTok{"load"}\NormalTok{)]}
+
+\FunctionTok{write\_csv}\NormalTok{(averagednn1\_3\_4, }\StringTok{"nn1+nn3+nn4.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}
