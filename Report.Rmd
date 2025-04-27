@@ -1,5 +1,5 @@
 ---
-title: "Report"
+title: "TS Competition Final Report"
 author: "Daniel & Ellie"
 date: "2025-04-25"
 output:
@@ -7,6 +7,8 @@ output:
   html_document: default
 ---
 
+# Github Link
+https://github.com/Dsw52/Shang_Whitehead_TS_Competition
 
 # Top Five Models
 ```{r setup, include=FALSE}
@@ -14,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Import Data and Packages
-```{r Data and Packages, include=FALSE}
+```{r Data and Packages, echo=TRUE, results='hide'}
 library(lubridate)
 library(ggplot2)
 library(forecast)
@@ -51,7 +53,7 @@ all_load_data <- load_data %>%
 
 ```
 
-## Neural network selection (responsible for 5/5 most accurate submissions)
+# Neural network selection (responsible for 5/5 most accurate submissions)
 
 Neural networks use past values and seasonal patterns to model complex time series like load data. Unlike traditional models like ARIMA, they can capture non-linear relationships in the data. By using lagged inputs and seasonal signals, neural networks handle both short- and long-term patterns, similar to SARIMA models. However, they offer an advantage by learning more complex, non-linear behaviors in the data.
 
@@ -113,8 +115,9 @@ write.csv(formatted_forecast, "nn#.csv", row.names=FALSE)
 ```
 
 ### Merged NN1 and NN3
+This shows the code for the merged NN1 and NN3 data
 
-```{r Merged NN1 and NN3, warning=FALSE}
+```{r Merged NN1 and NN3, warning=FALSE, echo=TRUE, results='hide'}
 
 # Read the two CSV files
 nn1 <- read_csv("~/Downloads/nn1.csv")   
@@ -135,8 +138,9 @@ write_csv(averagednn1_3, "nn1+nn3.csv")
 ```
 
 ### Merged NN1NN3NN4
+This shows the code for the merged NN1, NN3, and NN4 data
 
-```{r Merged NN1NN3NN4, warning=FALSE}
+```{r Merged NN1NN3NN4, warning=FALSE, echo=TRUE, results='hide'}
 nn1 <- read_csv("~/Downloads/nn1.csv", col_names = TRUE)
 nn3 <- read_csv("nn3.csv", col_names = TRUE)
 nn4 <- read_csv("nn4.csv", col_names = TRUE)
